@@ -1,0 +1,139 @@
+---
+title: "Programming in Base R"
+format: html
+---
+
+#Task 1: Basic Vector Practice
+
+1.  Set the vectors for *pre_measures* and *post_measures*:
+
+```{r}
+pre_measures <- c(120, 151, 125, 126, 115, 132, 132, 129, 134, 139, 127, 122, 127, 135, 133, 128, 147, 138, 140, 132)
+post_measures <- c(127, 145, 135, 122, 115, 122, 123, 126, 126, 129, 132, 146, 120, 114, 121, 120, 128, 120, 133, 115)
+```
+
+2.  Update the names for each element to *Subject_x*:
+
+```{r}
+names(pre_measures) <- paste("Subject", 1:20, sep = "_")
+names(post_measures) <- paste("Subject", 1:20, sep = "_")
+```
+
+3.  Create another vector representing the difference in the *pre* and *post* measurements for each subject:
+
+```{r}
+delta_measures <- post_measures - pre_measures
+head(delta_measures)
+```
+
+4.  Calculate average decrease in blood pressure over all subjects:
+
+```{r}
+mean(delta_measures)
+```
+
+5.  Identify the subjects that experienced a positive change (decreased blood pressure measurement):
+
+```{r}
+positive_change_indices <- which(delta_measures < 0)
+head(positive_change_indices)
+```
+
+6.  Now, subset the delta vector for only those with the positive change:
+
+```{r}
+positive_change_subjects <- delta_measures[positive_change_indices]
+head(positive_change_subjects)
+```
+
+7.  Lastly, calculate average decrease in blood pressure *of those who experienced a decrease*:
+
+```{r}
+mean(positive_change_subjects)
+```
+
+# Task 2: Basic Data Frame Practice
+
+1.  Create a data frame with a column for each of:
+
+-   patient
+-   pre_bp
+-   post_bp
+-   diff_bp
+
+```{r}
+bp_df = data.frame(
+  "patient" = paste("Subject", 1:20, sep = "_"),
+  "pre_bp" = pre_measures,
+  "post_bp" = post_measures,
+  "diff_bp" = delta_measures,
+  row.names = NULL
+  )
+head(bp_df)
+```
+
+2. Access the rows corresponding to negative values of the column *diff_bp*:
+
+```{r}
+bp_df[bp_df$diff_bp<0,]
+```
+
+3. Add a new column, *TRUE* if post_bp < 120:
+
+```{r}
+bp_df$post_bp_under_120 = bp_df$post_bp<120
+```
+
+4. Print the finished data frame nicely:
+
+```{r}
+knitr::kable(bp_df)
+```
+
+# Task 3: List practice
+
+1. Create a new data frame to represent this additional set of subjects that received placebos:
+
+```{r}
+placebo_df <- data.frame(
+  "patient" = paste("Subject",1:20,sep="_"),
+  "pre_bp" = c(138, 135, 147, 117, 152, 134, 114, 121, 131, 130),
+  "post_bp" = c(105, 136, 123, 130, 134, 143, 135, 139, 120, 124)
+)
+
+#adding diff and under_120 cols
+placebo_df$diff_bp <- placebo_df$post_bp - placebo_df$pre_bp
+placebo_df$post_bp_under_120 <- placebo_df$diff_bp<120
+
+head(placebo_df)
+```
+
+2. Now make a list whose first element is the original *treatment* group and whose second element is the *placebo* group:
+
+```{r}
+patient_list <- list(
+  "treatment" = bp_df,
+  "placebo" = placebo_df
+  )
+```
+
+3. Show three ways to access the first element of this list:
+
+```{r}
+patient_list[1]
+```
+
+```{r}
+patient_list[[1]]
+```
+
+```{r}
+patient_list$treatment
+```
+
+4. Access the *pre_bp* column of the *placebo* element with one line of code:
+
+```{r}
+patient_list[[2]]$pre_bp
+```
+
